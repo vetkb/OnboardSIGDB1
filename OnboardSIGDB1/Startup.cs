@@ -11,8 +11,8 @@ using Newtonsoft.Json;
 using OnboardSIGDB1.Business;
 using OnboardSIGDB1.DAL;
 using OnboardSIGDB1.DAL.Models;
-using OnboardSIGDB1.DTO;
 using OnboardSIGDB1.DTO.Cargo;
+using OnboardSIGDB1.DTO.Empresa;
 using OnboardSIGDB1.DTO.Funcionario;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -52,9 +52,13 @@ namespace OnboardSIGDB1
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<Cargo, CargoDto>();
+                cfg.CreateMap<Cargo, CargoDropdownDto>();
                 cfg.CreateMap<Empresa, EmpresaDto>();
+                cfg.CreateMap<Empresa, EmpresaDropdownDto>();
                 cfg.CreateMap<Funcionario, FuncionarioDto>()
+                .ForMember(dest => dest.EmpresaId, s => s.MapFrom(x => x.EmpresaId))
                 .ForMember(dest => dest.EmpresaNome, s => s.MapFrom(x => x.Empresa == null ? string.Empty : x.Empresa.Nome))
+                .ForMember(dest => dest.CargoId, s => s.MapFrom(x => x.CargoId))
                 .ForMember(dest => dest.CargoDescricao, s => s.MapFrom(x => x.Cargo == null ? string.Empty : x.Cargo.Descricao));
             });
             IMapper mapper = config.CreateMapper();
@@ -84,7 +88,10 @@ namespace OnboardSIGDB1
                 await context.Response.WriteAsync(result);
             }));
 
-            app.UseCors(options => options.AllowAnyOrigin());
+            app.UseCors(options => 
+            options.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
             app.UseHttpsRedirection();
             app.UseMvc();
 

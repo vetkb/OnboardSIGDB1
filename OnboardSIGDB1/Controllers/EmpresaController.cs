@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -31,7 +32,7 @@ namespace OnboardSIGDB1.Controllers
             List<EmpresaDto> empresaDtos = _mapper.Map<List<EmpresaDto>>(empresas);
 
             return Ok(empresaDtos);
-        }
+        }        
 
         // GET api/empresa/pesquisar
         [HttpGet("pesquisar")]
@@ -52,6 +53,11 @@ namespace OnboardSIGDB1.Controllers
 
             EmpresaDto empresaDto = _mapper.Map<EmpresaDto>(empresa);
 
+            if (empresaDto == null)
+            {
+                return NotFound(empresaDto);
+            }
+
             return Ok(empresaDto);
         }
 
@@ -66,35 +72,65 @@ namespace OnboardSIGDB1.Controllers
                 Cnpj = dto.Cnpj
             };
 
-            _empresaBusiness.Post(empresa);
-
-            return Ok();
+            try
+            {
+                _empresaBusiness.Post(empresa);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }            
         }
 
         // PUT api/empresa
         [HttpPut]
         public async Task<IActionResult> Put(int id, [FromBody] CadastroEmpresaDto dto)
         {
-            Empresa empresa = new Empresa()
+            try
             {
-                Id = id,
-                Nome = dto.Nome,
-                DataFundacao = dto.DataFundacao,
-                Cnpj = dto.Cnpj
-            };
+                Empresa empresa = new Empresa()
+                {
+                    Id = id,
+                    Nome = dto.Nome,
+                    DataFundacao = dto.DataFundacao,
+                    Cnpj = dto.Cnpj
+                };
 
-            _empresaBusiness.Put(empresa);
+                _empresaBusiness.Put(empresa);
 
-            return Ok();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }            
         }
 
         // DELETE api/empresa/1
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            _empresaBusiness.Delete(id);
+            try
+            {
+                _empresaBusiness.Delete(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
 
-            return Ok();
+        // GET api/empresa/dropdown
+        [HttpGet("dropdown")]
+        public async Task<IActionResult> GetDropdown()
+        {
+            List<Empresa> empresas = _empresaBusiness.GetTodasEmpresas();
+
+            List<EmpresaDropdownDto> empresaDtos = _mapper.Map<List<EmpresaDropdownDto>>(empresas);
+
+            return Ok(empresaDtos);
         }
     }
 }

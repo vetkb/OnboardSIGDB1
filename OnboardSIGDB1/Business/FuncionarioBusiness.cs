@@ -52,22 +52,22 @@ namespace OnboardSIGDB1.Business
         {
             if (string.IsNullOrWhiteSpace(funcionario.Nome))
             {
-                throw new ArgumentNullException("NomeObrigatorio");
+                throw new ArgumentNullException("Nome obrigatório", "NomeObrigatorio");
             }
 
             if (funcionario.Nome.Length > 150)
             {
-                throw new ArgumentOutOfRangeException("TamanhoMaximo150");
+                throw new ArgumentOutOfRangeException("Tamanho máximo de caracteres: 150", "TamanhoMaximo150");
             }
 
             if (string.IsNullOrWhiteSpace(funcionario.Cpf))
             {
-                throw new ArgumentNullException("CpfObrigatorio");
+                throw new ArgumentNullException("CPF obrigatório", "CpfObrigatorio");
             }
 
             if (!HelperCpf.Valido(funcionario.Cpf))
             {
-                throw new ArgumentException("CpfInvalido");
+                throw new ArgumentException("CPF inválido", "CpfInvalido");
             }
         }
 
@@ -77,11 +77,11 @@ namespace OnboardSIGDB1.Business
             {
                 ValidacaoCamposFuncionario(funcionario);
 
-                funcionario.Cpf = HelperCnpj.RemoveMascara(funcionario.Cpf);
+                funcionario.Cpf = HelperCpf.RemoveMascara(funcionario.Cpf);
 
                 if (_context.Funcionarios.Any(x => x.Cpf.Equals(funcionario.Cpf)))
                 {
-                    throw new Exception("CpfUtilizado");
+                    throw new ArgumentException("CPF utilizado", "CpfUtilizado");
                 }
 
                 _context.Funcionarios.Add(funcionario);
@@ -99,16 +99,16 @@ namespace OnboardSIGDB1.Business
             {
                 if (!_context.Funcionarios.Any(x => x.Id == funcionario.Id))
                 {
-                    throw new ArgumentNullException("IdInvalido");
+                    throw new ArgumentNullException("Funcionario não localizado", "IdInvalido");
                 }
 
                 ValidacaoCamposFuncionario(funcionario);
 
-                funcionario.Cpf = HelperCnpj.RemoveMascara(funcionario.Cpf);
+                funcionario.Cpf = HelperCpf.RemoveMascara(funcionario.Cpf);
 
                 if (_context.Funcionarios.Any(x => x.Cpf.Equals(funcionario.Cpf) && x.Id != funcionario.Id))
                 {
-                    throw new Exception("CpfUtilizado");
+                    throw new ArgumentException("CPF utilizado", "CpfUtilizado");
                 }
 
                 _context.Funcionarios.Update(funcionario);
@@ -128,7 +128,7 @@ namespace OnboardSIGDB1.Business
 
                 if (funcionario == null)
                 {
-                    throw new ArgumentNullException("IdInvalido");
+                    throw new ArgumentNullException("Funcionario não localizado", "IdInvalido");
                 }
 
                 _context.Funcionarios.Remove(funcionario);

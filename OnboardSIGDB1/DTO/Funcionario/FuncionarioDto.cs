@@ -8,7 +8,9 @@ namespace OnboardSIGDB1.DTO.Funcionario
         public string Nome { get; set; }
         public string Cpf { get; set; }
         public DateTime? DataContratacao { get; set; }
+        public int? EmpresaId { get; set; }
         public string EmpresaNome { get; set; }
+        public int? CargoId { get; set; }
         public string CargoDescricao { get; set; }
     }
 }

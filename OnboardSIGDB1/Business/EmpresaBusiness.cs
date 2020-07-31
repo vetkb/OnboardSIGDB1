@@ -51,22 +51,22 @@ namespace OnboardSIGDB1.Business
         {
             if (string.IsNullOrWhiteSpace(empresa.Nome))
             {
-                throw new ArgumentNullException("NomeObrigatorio");
+                throw new ArgumentNullException("Nome obrigatório", "NomeObrigatorio");
             }
 
             if (empresa.Nome.Length > 150)
             {
-                throw new ArgumentOutOfRangeException("TamanhoMaximo150");
+                throw new ArgumentOutOfRangeException("Tamanho máximo de caracteres: 150", "TamanhoMaximo150");
             }
 
             if (string.IsNullOrWhiteSpace(empresa.Cnpj))
             {
-                throw new ArgumentNullException("CnpjObrigatorio");
+                throw new ArgumentNullException("CNPJ obrigatório", "CnpjObrigatorio");
             }
 
             if (!HelperCnpj.Valido(empresa.Cnpj))
             {
-                throw new ArgumentException("CnpjInvalido");
+                throw new ArgumentException("CNPJ inválido", "CnpjInvalido");
             }
         }
 
@@ -80,7 +80,7 @@ namespace OnboardSIGDB1.Business
 
                 if (_context.Empresas.Any(x => x.Cnpj.Equals(empresa.Cnpj)))
                 {
-                    throw new Exception("CnpjUtilizado");
+                    throw new ArgumentException("CNPJ utilizado", "CnpjUtilizado");
                 }
 
                 _context.Empresas.Add(empresa);
@@ -98,7 +98,7 @@ namespace OnboardSIGDB1.Business
             {
                 if (!_context.Empresas.Any(x => x.Id == empresa.Id))
                 {
-                    throw new ArgumentNullException("IdInvalido");
+                    throw new ArgumentException("Empresa não localizada", "IdInvalido");
                 }
 
                 ValidacaoCamposEmpresa(empresa);
@@ -107,7 +107,7 @@ namespace OnboardSIGDB1.Business
 
                 if (_context.Empresas.Any(x => x.Cnpj.Equals(empresa.Cnpj) && x.Id != empresa.Id))
                 {
-                    throw new Exception("CnpjUtilizado");
+                    throw new ArgumentException("CNPJ utilizado", "CnpjUtilizado");
                 }
 
                 _context.Empresas.Update(empresa);
@@ -127,12 +127,12 @@ namespace OnboardSIGDB1.Business
 
                 if (empresa == null)
                 {
-                    throw new ArgumentNullException("IdInvalido");
+                    throw new ArgumentException("Empresa não localizada", "IdInvalido");
                 }
 
                 if (empresa.Funcionarios.Count > 0)
                 {
-                    throw new ArgumentException("FuncionarioAssociadoEmpresa");
+                    throw new ArgumentException("Existem funcionários associados a essa empresa", "FuncionarioAssociadoEmpresa");
                 }
 
                 _context.Empresas.Remove(empresa);

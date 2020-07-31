@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OnboardSIGDB1.DAL;
+﻿using OnboardSIGDB1.DAL;
 using OnboardSIGDB1.DAL.Models;
 using System;
 using System.Collections.Generic;
@@ -39,14 +38,14 @@ namespace OnboardSIGDB1.Business
         {
             if (string.IsNullOrWhiteSpace(cargo.Descricao))
             {
-                throw new ArgumentNullException("DescricaoObrigatorio");
+                throw new ArgumentNullException("Descrição obrigatório", "DescricaoObrigatorio");
             }
 
             cargo.Descricao = cargo.Descricao.Trim();
 
             if (cargo.Descricao.Length > 250)
             {
-                throw new ArgumentOutOfRangeException("TamanhoMaximo250");
+                throw new ArgumentOutOfRangeException("Tamanho máximo de caracteres: 250", "TamanhoMaximo250");
             }
         }
 
@@ -60,7 +59,7 @@ namespace OnboardSIGDB1.Business
 
                 if (_context.Cargos.Any(x => x.Descricao.Equals(cargo.Descricao)))
                 {
-                    throw new Exception("DescricaoUtilizada");
+                    throw new ArgumentException("Descrição utilizada", "DescricaoUtilizada");
                 }
 
                 _context.Cargos.Add(cargo);
@@ -78,7 +77,7 @@ namespace OnboardSIGDB1.Business
             {
                 if (!_context.Cargos.Any(x => x.Id == cargo.Id))
                 {
-                    throw new ArgumentNullException("IdInvalido");
+                    throw new ArgumentNullException("Cargo não localizado", "IdInvalido");
                 }
 
                 ValidacaoCamposCargo(cargo);
@@ -87,7 +86,7 @@ namespace OnboardSIGDB1.Business
 
                 if (_context.Cargos.Any(x => x.Descricao.Equals(cargo.Descricao) && x.Id != cargo.Id))
                 {
-                    throw new Exception("DescricaoUtilizada");
+                    throw new ArgumentException("Descrição utilizada", "DescricaoUtilizada");
                 }
 
                 _context.Cargos.Update(cargo);
@@ -107,7 +106,7 @@ namespace OnboardSIGDB1.Business
 
                 if (cargo == null)
                 {
-                    throw new ArgumentNullException("IdInvalido");
+                    throw new ArgumentNullException("Cargo não localizado", "IdInvalido");
                 }
 
                 _context.Cargos.Remove(cargo);

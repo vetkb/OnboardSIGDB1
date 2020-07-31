@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OnboardSIGDB1.DTO
+namespace OnboardSIGDB1.DTO.Empresa
 {
     public class EmpresaDto
     {

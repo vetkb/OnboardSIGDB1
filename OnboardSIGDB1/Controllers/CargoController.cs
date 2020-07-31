@@ -91,5 +91,16 @@ namespace OnboardSIGDB1.Controllers
 
             return Ok();
         }
+
+        // GET api/cargo/dropdown
+        [HttpGet("dropdown")]
+        public async Task<IActionResult> GetDropdown()
+        {
+            List<Cargo> cargos = _cargoBusiness.GetTodosCargos();
+
+            List<CargoDropdownDto> cargosDto = _mapper.Map<List<CargoDropdownDto>>(cargos);
+
+            return Ok(cargosDto);
+        }
     }
 }
