@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using OnboardSIGDB1.Business;
-using OnboardSIGDB1.DAL.Models;
-using OnboardSIGDB1.DTO;
-using OnboardSIGDB1.DTO.Empresa;
+using OnboardSIGDB1Dominio.EmpresaDominio.DTO;
+using OnboardSIGDB1Dominio.EmpresaDominio.Interfaces;
+using OnboardSIGDB1Dominio.EmpresaDominio.ModelosDeBancoDeDados;
 
 namespace OnboardSIGDB1.Controllers
 {
@@ -15,11 +14,11 @@ namespace OnboardSIGDB1.Controllers
     public class EmpresaController : ControllerBase
     {
         IMapper _mapper;
-        private readonly EmpresaBusiness _empresaBusiness;
+        private readonly IEmpresaBusiness _iEmpresaBusiness;
 
-        public EmpresaController(EmpresaBusiness empresaBusiness, IMapper mapper)
+        public EmpresaController(IEmpresaBusiness iEmpresaBusiness, IMapper mapper)
         {
-            _empresaBusiness = empresaBusiness;
+            _iEmpresaBusiness = iEmpresaBusiness;
             _mapper = mapper;
         }
 
@@ -27,7 +26,7 @@ namespace OnboardSIGDB1.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            List<Empresa> empresas = _empresaBusiness.GetTodasEmpresas();
+            List<Empresa> empresas = _iEmpresaBusiness.GetTodasEmpresas();
 
             List<EmpresaDto> empresaDtos = _mapper.Map<List<EmpresaDto>>(empresas);
 
@@ -36,9 +35,9 @@ namespace OnboardSIGDB1.Controllers
 
         // GET api/empresa/pesquisar
         [HttpGet("pesquisar")]
-        public async Task<IActionResult> Get([FromQuery]Filtro filtro)
+        public async Task<IActionResult> Get([FromQuery]FiltroEmpresaDto filtro)
         {
-            List<Empresa> empresas = _empresaBusiness.GetEmpresas(filtro.Nome, filtro.NumeroDocumento, filtro.Data);
+            List<Empresa> empresas = _iEmpresaBusiness.GetEmpresas(filtro.Nome, filtro.Cnpj, filtro.DataFundacao);
 
             List<EmpresaDto> empresaDtos = _mapper.Map<List<EmpresaDto>>(empresas);
 
@@ -49,7 +48,7 @@ namespace OnboardSIGDB1.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            Empresa empresa = _empresaBusiness.GetEmpresa(id);
+            Empresa empresa = _iEmpresaBusiness.GetEmpresa(id);
 
             EmpresaDto empresaDto = _mapper.Map<EmpresaDto>(empresa);
 
@@ -74,7 +73,7 @@ namespace OnboardSIGDB1.Controllers
 
             try
             {
-                _empresaBusiness.Post(empresa);
+                _iEmpresaBusiness.Post(empresa);
                 return Ok();
             }
             catch (Exception ex)
@@ -97,7 +96,7 @@ namespace OnboardSIGDB1.Controllers
                     Cnpj = dto.Cnpj
                 };
 
-                _empresaBusiness.Put(empresa);
+                _iEmpresaBusiness.Put(empresa);
 
                 return Ok();
             }
@@ -113,7 +112,7 @@ namespace OnboardSIGDB1.Controllers
         {
             try
             {
-                _empresaBusiness.Delete(id);
+                _iEmpresaBusiness.Delete(id);
                 return Ok();
             }
             catch (Exception ex)
@@ -126,7 +125,7 @@ namespace OnboardSIGDB1.Controllers
         [HttpGet("dropdown")]
         public async Task<IActionResult> GetDropdown()
         {
-            List<Empresa> empresas = _empresaBusiness.GetTodasEmpresas();
+            List<Empresa> empresas = _iEmpresaBusiness.GetTodasEmpresas();
 
             List<EmpresaDropdownDto> empresaDtos = _mapper.Map<List<EmpresaDropdownDto>>(empresas);
 

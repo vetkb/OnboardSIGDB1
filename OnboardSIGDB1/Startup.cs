@@ -8,12 +8,22 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using OnboardSIGDB1.Business;
-using OnboardSIGDB1.DAL;
-using OnboardSIGDB1.DAL.Models;
-using OnboardSIGDB1.DTO.Cargo;
-using OnboardSIGDB1.DTO.Empresa;
-using OnboardSIGDB1.DTO.Funcionario;
+using OnboardSIGDB1Dominio;
+using OnboardSIGDB1Dominio.CargoDominio.Business;
+using OnboardSIGDB1Dominio.CargoDominio.DTO;
+using OnboardSIGDB1Dominio.CargoDominio.Interfaces;
+using OnboardSIGDB1Dominio.CargoDominio.ModelosDeBancoDeDados;
+using OnboardSIGDB1Dominio.CargoDominio.Repositorios;
+using OnboardSIGDB1Dominio.EmpresaDominio.Business;
+using OnboardSIGDB1Dominio.EmpresaDominio.DTO;
+using OnboardSIGDB1Dominio.EmpresaDominio.Interfaces;
+using OnboardSIGDB1Dominio.EmpresaDominio.ModelosDeBancoDeDados;
+using OnboardSIGDB1Dominio.EmpresaDominio.Repositorios;
+using OnboardSIGDB1Dominio.FuncionarioDominio.Business;
+using OnboardSIGDB1Dominio.FuncionarioDominio.DTO;
+using OnboardSIGDB1Dominio.FuncionarioDominio.Interfaces;
+using OnboardSIGDB1Dominio.FuncionarioDominio.ModelosDeBancoDeDados;
+using OnboardSIGDB1Dominio.FuncionarioDominio.Repositorios;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace OnboardSIGDB1
@@ -45,9 +55,12 @@ namespace OnboardSIGDB1
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
                 , ServiceLifetime.Transient);
 
-            services.AddScoped<EmpresaBusiness>();
-            services.AddScoped<FuncionarioBusiness>();
-            services.AddScoped<CargoBusiness>();
+            services.AddScoped<ICargoBusiness, CargoBusiness>();
+            services.AddScoped<ICargoRepositorio, CargoRepositorio>();
+            services.AddScoped<IEmpresaBusiness, EmpresaBusiness>();
+            services.AddScoped<IEmpresaRepositorio, EmpresaRepositorio>();
+            services.AddScoped<IFuncionarioBusiness, FuncionarioBusiness>();
+            services.AddScoped<IFuncionarioRepositorio, FuncionarioRepositorio>();
 
             var config = new MapperConfiguration(cfg =>
             {

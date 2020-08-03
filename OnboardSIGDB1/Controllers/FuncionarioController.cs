@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using OnboardSIGDB1.Business;
-using OnboardSIGDB1.DAL.Models;
-using OnboardSIGDB1.DTO;
-using OnboardSIGDB1.DTO.Funcionario;
+using OnboardSIGDB1Dominio.FuncionarioDominio.DTO;
+using OnboardSIGDB1Dominio.FuncionarioDominio.Interfaces;
+using OnboardSIGDB1Dominio.FuncionarioDominio.ModelosDeBancoDeDados;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,11 +13,11 @@ namespace OnboardSIGDB1.Controllers
     public class FuncionarioController : ControllerBase
     {
         IMapper _mapper;
-        private readonly FuncionarioBusiness _funcionarioBusiness;
+        readonly IFuncionarioBusiness _iFuncionarioBusiness;
 
-        public FuncionarioController(FuncionarioBusiness funcionarioBusiness, IMapper mapper)
+        public FuncionarioController(IFuncionarioBusiness iFuncionarioBusiness, IMapper mapper)
         {
-            _funcionarioBusiness = funcionarioBusiness;
+            _iFuncionarioBusiness = iFuncionarioBusiness;
             _mapper = mapper;
         }
 
@@ -26,7 +25,7 @@ namespace OnboardSIGDB1.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            List<Funcionario> funcionarios = _funcionarioBusiness.GetTodosFuncionarios();
+            List<Funcionario> funcionarios = _iFuncionarioBusiness.GetTodosFuncionarios();
 
             List<FuncionarioDto> funcionariosDto = _mapper.Map<List<FuncionarioDto>>(funcionarios);
 
@@ -35,9 +34,9 @@ namespace OnboardSIGDB1.Controllers
 
         // GET api/funcionario/pesquisar
         [HttpGet("pesquisar")]
-        public async Task<IActionResult> Get([FromQuery] Filtro filtro)
+        public async Task<IActionResult> Get([FromQuery] FiltroFuncionarioDto filtro)
         {
-            List<Funcionario> funcionarios = _funcionarioBusiness.GetFuncionarios(filtro.Nome, filtro.NumeroDocumento, filtro.Data);
+            List<Funcionario> funcionarios = _iFuncionarioBusiness.GetFuncionarios(filtro.Nome, filtro.Cpf, filtro.DataContratacao);
 
             List<FuncionarioDto> funcionariosDto = _mapper.Map<List<FuncionarioDto>>(funcionarios);
 
@@ -48,7 +47,7 @@ namespace OnboardSIGDB1.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            Funcionario funcionario = _funcionarioBusiness.GetFuncionario(id);
+            Funcionario funcionario = _iFuncionarioBusiness.GetFuncionario(id);
 
             FuncionarioDto funcionarioDto = _mapper.Map<FuncionarioDto>(funcionario);
 
@@ -66,7 +65,7 @@ namespace OnboardSIGDB1.Controllers
                 Cpf = dto.Cpf
             };
 
-            _funcionarioBusiness.Post(funcionario);
+            _iFuncionarioBusiness.Post(funcionario);
 
             return Ok();
         }
@@ -85,7 +84,7 @@ namespace OnboardSIGDB1.Controllers
                 EmpresaId = dto.EmpresaId
             };
 
-            _funcionarioBusiness.Put(funcionario);
+            _iFuncionarioBusiness.Put(funcionario);
 
             return Ok();
         }
@@ -94,7 +93,7 @@ namespace OnboardSIGDB1.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            _funcionarioBusiness.Delete(id);
+            _iFuncionarioBusiness.Delete(id);
 
             return Ok();
         }

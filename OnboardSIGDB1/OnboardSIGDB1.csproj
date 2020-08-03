@@ -6,15 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20200727183541_InitialMigration.cs" />
-    <Compile Remove="Migrations\20200727183541_InitialMigration.Designer.cs" />
-    <Compile Remove="Migrations\20200727184713_InitialMigration.cs" />
-    <Compile Remove="Migrations\20200727184713_InitialMigration.Designer.cs" />
-    <Compile Remove="Migrations\20200727214837_InitialMigration.cs" />
-    <Compile Remove="Migrations\20200727214837_InitialMigration.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
@@ -22,6 +13,10 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OnboardSIGDB1Dominio\OnboardSIGDB1Dominio.csproj" />
   </ItemGroup>
 
 </Project>

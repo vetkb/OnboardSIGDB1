@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using OnboardSIGDB1.Business;
-using OnboardSIGDB1.DAL.Models;
-using OnboardSIGDB1.DTO.Cargo;
+using OnboardSIGDB1Dominio.CargoDominio.DTO;
+using OnboardSIGDB1Dominio.CargoDominio.Interfaces;
+using OnboardSIGDB1Dominio.CargoDominio.ModelosDeBancoDeDados;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -13,11 +13,11 @@ namespace OnboardSIGDB1.Controllers
     public class CargoController : ControllerBase
     {
         IMapper _mapper;
-        private readonly CargoBusiness _cargoBusiness;
+        private readonly ICargoBusiness _iCargoBusiness;
 
-        public CargoController(CargoBusiness cargoBusiness, IMapper mapper)
+        public CargoController(ICargoBusiness iCargoBusiness, IMapper mapper)
         {
-            _cargoBusiness = cargoBusiness;
+            _iCargoBusiness = iCargoBusiness;
             _mapper = mapper;
         }
 
@@ -25,7 +25,7 @@ namespace OnboardSIGDB1.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            List<Cargo> cargos = _cargoBusiness.GetTodosCargos();
+            List<Cargo> cargos = _iCargoBusiness.GetTodosCargos();
 
             List<CargoDto> cargosDto = _mapper.Map<List<CargoDto>>(cargos);
 
@@ -34,9 +34,9 @@ namespace OnboardSIGDB1.Controllers
 
         // GET api/cargo/pesquisar
         [HttpGet("pesquisar")]
-        public async Task<IActionResult> Get([FromQuery] CargoFiltro filtro)
+        public async Task<IActionResult> Get([FromQuery] FiltroCargoDto filtro)
         {
-            List<Cargo> cargos = _cargoBusiness.GetCargos(filtro.Descricao);
+            List<Cargo> cargos = _iCargoBusiness.PesquisarCargos(filtro.Descricao);
 
             List<CargoDto> cargosDto = _mapper.Map<List<CargoDto>>(cargos);
 
@@ -47,7 +47,7 @@ namespace OnboardSIGDB1.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            Cargo cargo = _cargoBusiness.GetCargo(id);
+            Cargo cargo = _iCargoBusiness.GetCargo(id);
 
             CargoDto cargoDto = _mapper.Map<CargoDto>(cargo);
 
@@ -58,12 +58,9 @@ namespace OnboardSIGDB1.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CadastroCargoDto dto)
         {
-            Cargo cargo = new Cargo()
-            {
-                Descricao = dto.Descricao
-            };
+            Cargo cargo = new Cargo(dto.Descricao);
 
-            _cargoBusiness.Post(cargo);
+            _iCargoBusiness.Post(cargo);
 
             return Ok();
         }
@@ -72,13 +69,9 @@ namespace OnboardSIGDB1.Controllers
         [HttpPut]
         public async Task<IActionResult> Put(int id, [FromBody] CadastroCargoDto dto)
         {
-            Cargo cargo = new Cargo()
-            {
-                Id = id,
-                Descricao = dto.Descricao
-            };
+            Cargo cargo = new Cargo(id, dto.Descricao);
 
-            _cargoBusiness.Put(cargo);
+            _iCargoBusiness.Put(cargo);
 
             return Ok();
         }
@@ -87,7 +80,7 @@ namespace OnboardSIGDB1.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            _cargoBusiness.Delete(id);
+            _iCargoBusiness.Delete(id);
 
             return Ok();
         }
@@ -96,7 +89,7 @@ namespace OnboardSIGDB1.Controllers
         [HttpGet("dropdown")]
         public async Task<IActionResult> GetDropdown()
         {
-            List<Cargo> cargos = _cargoBusiness.GetTodosCargos();
+            List<Cargo> cargos = _iCargoBusiness.GetTodosCargos();
 
             List<CargoDropdownDto> cargosDto = _mapper.Map<List<CargoDropdownDto>>(cargos);
 

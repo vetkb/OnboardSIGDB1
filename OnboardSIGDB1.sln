@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30320.27
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnboardSIGDB1", "OnboardSIGDB1\OnboardSIGDB1.csproj", "{1EDEC4FD-465B-4E72-80B7-E0CC9F87E9A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnboardSIGDB1", "OnboardSIGDB1\OnboardSIGDB1.csproj", "{1EDEC4FD-465B-4E72-80B7-E0CC9F87E9A3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnboardSIGDB1Test", "OnboardSIGDB1Test\OnboardSIGDB1Test.csproj", "{C7B57305-36B6-4947-86C0-3CEA3DB78F2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnboardSIGDB1Dominio", "OnboardSIGDB1Dominio\OnboardSIGDB1Dominio.csproj", "{C4E7EE1D-81BD-45E5-A1BB-6D4B993F3BEF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{1EDEC4FD-465B-4E72-80B7-E0CC9F87E9A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1EDEC4FD-465B-4E72-80B7-E0CC9F87E9A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1EDEC4FD-465B-4E72-80B7-E0CC9F87E9A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7B57305-36B6-4947-86C0-3CEA3DB78F2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7B57305-36B6-4947-86C0-3CEA3DB78F2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7B57305-36B6-4947-86C0-3CEA3DB78F2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7B57305-36B6-4947-86C0-3CEA3DB78F2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4E7EE1D-81BD-45E5-A1BB-6D4B993F3BEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4E7EE1D-81BD-45E5-A1BB-6D4B993F3BEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4E7EE1D-81BD-45E5-A1BB-6D4B993F3BEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4E7EE1D-81BD-45E5-A1BB-6D4B993F3BEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
