@@ -5,6 +5,11 @@ namespace OnboardSIGDB1Test.Helper
 {
     public class HelperCpfTestes
     {
+        public HelperCpfTestes()
+        {
+
+        }
+
         [Fact]
         public void DeveRetornarUmaStringCom11CaracteresExatosAposRemoverMascara()
         {

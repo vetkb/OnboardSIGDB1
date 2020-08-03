@@ -64,12 +64,7 @@ namespace OnboardSIGDB1.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CadastroEmpresaDto dto)
         {
-            Empresa empresa = new Empresa()
-            {
-                Nome = dto.Nome,
-                DataFundacao = dto.DataFundacao,
-                Cnpj = dto.Cnpj
-            };
+            Empresa empresa = new Empresa(dto.Nome, dto.Cnpj, dto.DataFundacao);
 
             try
             {
@@ -88,13 +83,7 @@ namespace OnboardSIGDB1.Controllers
         {
             try
             {
-                Empresa empresa = new Empresa()
-                {
-                    Id = id,
-                    Nome = dto.Nome,
-                    DataFundacao = dto.DataFundacao,
-                    Cnpj = dto.Cnpj
-                };
+                Empresa empresa = new Empresa(id, dto.Nome, dto.Cnpj, dto.DataFundacao);
 
                 _iEmpresaBusiness.Put(empresa);
 

@@ -58,12 +58,7 @@ namespace OnboardSIGDB1.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CadastroFuncionarioDto dto)
         {
-            Funcionario funcionario = new Funcionario()
-            {
-                Nome = dto.Nome,
-                DataContratacao = dto.DataContratacao,
-                Cpf = dto.Cpf
-            };
+            Funcionario funcionario = new Funcionario(dto.Nome, dto.Cpf, dto.DataContratacao);
 
             _iFuncionarioBusiness.Post(funcionario);
 
@@ -74,15 +69,7 @@ namespace OnboardSIGDB1.Controllers
         [HttpPut]
         public async Task<IActionResult> Put(int id, [FromBody] CadastroFuncionarioDto dto)
         {
-            Funcionario funcionario = new Funcionario()
-            {
-                Id = id,
-                Nome = dto.Nome,
-                DataContratacao = dto.DataContratacao,
-                Cpf = dto.Cpf,
-                CargoId = dto.CargoId,
-                EmpresaId = dto.EmpresaId
-            };
+            Funcionario funcionario = new Funcionario(id, dto.Nome, dto.Cpf, dto.DataContratacao, dto.EmpresaId, dto.CargoId);
 
             _iFuncionarioBusiness.Put(funcionario);
 
