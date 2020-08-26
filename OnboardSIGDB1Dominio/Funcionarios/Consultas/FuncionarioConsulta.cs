@@ -17,6 +17,16 @@ namespace OnboardSIGDB1Dominio.Funcionarios.Consultas
 
         public List<Funcionario> ObterPorFiltro(FiltroFuncionarioDto filtro)
         {
+            if (string.IsNullOrWhiteSpace(filtro.Nome))
+            {
+                filtro.Nome = string.Empty;
+            }
+
+            if (string.IsNullOrWhiteSpace(filtro.Cpf))
+            {
+                filtro.Cpf = string.Empty;
+            }
+
             return _funcionarioRepositorio.ObterPorFiltro(filtro.Nome, filtro.Cpf, filtro.DataContratacao);
         }
 

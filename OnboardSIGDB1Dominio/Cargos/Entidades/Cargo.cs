@@ -6,6 +6,8 @@ namespace OnboardSIGDB1Dominio.Cargos.Entidades
 {
     public class Cargo : AbstractValidator<Cargo>
     {
+        private Cargo() { }
+
         public Cargo(int id, string descricao, List<Funcionario> funcionarios)
         {
             Id = id;

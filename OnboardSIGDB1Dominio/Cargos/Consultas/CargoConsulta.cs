@@ -28,6 +28,11 @@ namespace OnboardSIGDB1Dominio.Cargos.Consultas
 
         public List<Cargo> Pesquisar(FiltroCargoDto filtro)
         {
+            if (string.IsNullOrWhiteSpace(filtro.Descricao))
+            {
+                filtro.Descricao = string.Empty;
+            }
+
             return _cargoRepositorio.ObterPorDescricao(filtro.Descricao);
         }
     }

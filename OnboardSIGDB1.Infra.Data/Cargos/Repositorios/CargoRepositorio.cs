@@ -23,9 +23,7 @@ namespace OnboardSIGDB1.Infra.Data.Cargos.Repositorios
 
         public List<Cargo> ObterPorDescricao(string descricao)
         {
-            return _context.Cargos.Where(x =>
-                x.Descricao.ToLower().Equals(string.IsNullOrWhiteSpace(descricao) ? x.Descricao.ToLower() : descricao.ToLower())
-            ).ToList();
+                return _context.Cargos.Where(x => x.Descricao.Trim().ToLower() == descricao.Trim().ToLower()).ToList();
         }
 
         public Cargo ObterPorId(int id)

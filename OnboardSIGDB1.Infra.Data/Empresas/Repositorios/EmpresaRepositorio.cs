@@ -24,7 +24,7 @@ namespace OnboardSIGDB1.Infra.Data.Empresas.Repositorios
         public List<Empresa> ObterPorFiltro(string nome, string cnpj, DateTime? dataFundacao)
         {
             List<Empresa> empresas = _context.Empresas.Where(x =>
-                x.Nome.Equals(string.IsNullOrWhiteSpace(nome) ? x.Nome : nome) &&
+                x.Nome.Trim().ToLower().Equals(string.IsNullOrWhiteSpace(nome) ? x.Nome.Trim().ToLower() : nome.Trim().ToLower()) &&
                 x.Cnpj.Equals(string.IsNullOrWhiteSpace(cnpj) ? x.Cnpj : cnpj)
             ).ToList();
 

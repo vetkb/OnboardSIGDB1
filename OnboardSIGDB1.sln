@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnboardSIGDB1Test", "Onboar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnboardSIGDB1Dominio", "OnboardSIGDB1Dominio\OnboardSIGDB1Dominio.csproj", "{C4E7EE1D-81BD-45E5-A1BB-6D4B993F3BEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnboardSIGDB1.Infra.Data", "OnboardSIGDB1.Infra.Data\OnboardSIGDB1.Infra.Data.csproj", "{642C0B98-ECCE-48C3-B763-EF42435DFAA0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnboardSIGDB1.Infra.Data", "OnboardSIGDB1.Infra.Data\OnboardSIGDB1.Infra.Data.csproj", "{642C0B98-ECCE-48C3-B763-EF42435DFAA0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnboardSIGDB1.DI", "OnboardSIGDB1.DI\OnboardSIGDB1.DI.csproj", "{4B554412-E046-40A5-AAFA-384C2F7EC9F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{642C0B98-ECCE-48C3-B763-EF42435DFAA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{642C0B98-ECCE-48C3-B763-EF42435DFAA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{642C0B98-ECCE-48C3-B763-EF42435DFAA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B554412-E046-40A5-AAFA-384C2F7EC9F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B554412-E046-40A5-AAFA-384C2F7EC9F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B554412-E046-40A5-AAFA-384C2F7EC9F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B554412-E046-40A5-AAFA-384C2F7EC9F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

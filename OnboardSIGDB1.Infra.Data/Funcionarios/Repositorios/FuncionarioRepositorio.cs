@@ -30,7 +30,7 @@ namespace OnboardSIGDB1.Infra.Data.Funcionarios.Repositorios
                 .Include(x => x.Cargo)
                 .Include(x => x.Empresa)
                 .Where(x =>
-                    x.Nome.Equals(string.IsNullOrWhiteSpace(nome) ? x.Nome : nome) &&
+                    x.Nome.Trim().ToLower().Equals(string.IsNullOrWhiteSpace(nome) ? x.Nome.Trim().ToLower() : nome.Trim().ToLower()) &&
                     x.Cpf.Equals(string.IsNullOrWhiteSpace(cpf) ? x.Cpf : cpf)
             ).Include(x => x.Empresa).Include(x => x.Cargo).ToList();
 
