@@ -3,22 +3,33 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using OnboardSIGDB1Dominio.EmpresaDominio.DTO;
-using OnboardSIGDB1Dominio.EmpresaDominio.Interfaces;
-using OnboardSIGDB1Dominio.EmpresaDominio.ModelosDeBancoDeDados;
+using OnboardSIGDB1Dominio._Base.Interfaces;
+using OnboardSIGDB1Dominio.Empresas.Dtos;
+using OnboardSIGDB1Dominio.Empresas.Entidades;
+using OnboardSIGDB1Dominio.Empresas.Interfaces.Consultas;
+using OnboardSIGDB1Dominio.Empresas.Interfaces.Servicos;
 
 namespace OnboardSIGDB1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EmpresaController : ControllerBase
+    public class EmpresaController : BaseController
     {
         IMapper _mapper;
-        private readonly IEmpresaBusiness _iEmpresaBusiness;
+        private readonly IArmazenadorDeEmpresa _armazenadorDeEmpresa;
+        private readonly IExcluidorDeEmpresa _excluidorDeEmpresa;
+        private readonly IEmpresaConsulta _empresaConsulta;
 
-        public EmpresaController(IEmpresaBusiness iEmpresaBusiness, IMapper mapper)
+        public EmpresaController(
+            IArmazenadorDeEmpresa armazenadorDeEmpresa,
+            IExcluidorDeEmpresa excluidorDeEmpresa,
+            IEmpresaConsulta empresaConsulta,
+            IMapper mapper,
+            INotificationContext notificationContext) : base(notificationContext)
         {
-            _iEmpresaBusiness = iEmpresaBusiness;
+            _armazenadorDeEmpresa = armazenadorDeEmpresa;
+            _excluidorDeEmpresa = excluidorDeEmpresa;
+            _empresaConsulta = empresaConsulta;
             _mapper = mapper;
         }
 
@@ -26,18 +37,18 @@ namespace OnboardSIGDB1.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            List<Empresa> empresas = _iEmpresaBusiness.GetTodasEmpresas();
+            List<Empresa> empresas = _empresaConsulta.ObterTodas();
 
             List<EmpresaDto> empresaDtos = _mapper.Map<List<EmpresaDto>>(empresas);
 
             return Ok(empresaDtos);
-        }        
+        }
 
         // GET api/empresa/pesquisar
         [HttpGet("pesquisar")]
-        public async Task<IActionResult> Get([FromQuery]FiltroEmpresaDto filtro)
+        public async Task<IActionResult> Get([FromQuery] FiltroEmpresaDto filtro)
         {
-            List<Empresa> empresas = _iEmpresaBusiness.GetEmpresas(filtro.Nome, filtro.Cnpj, filtro.DataFundacao);
+            List<Empresa> empresas = _empresaConsulta.ObterPorFiltro(filtro);
 
             List<EmpresaDto> empresaDtos = _mapper.Map<List<EmpresaDto>>(empresas);
 
@@ -48,75 +59,69 @@ namespace OnboardSIGDB1.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            Empresa empresa = _iEmpresaBusiness.GetEmpresa(id);
+            Empresa empresa = _empresaConsulta.ObterPorId(id);
+
+            if (empresa == null)
+            {
+                return NotFound(empresa);
+            }
 
             EmpresaDto empresaDto = _mapper.Map<EmpresaDto>(empresa);
-
-            if (empresaDto == null)
-            {
-                return NotFound(empresaDto);
-            }
 
             return Ok(empresaDto);
         }
 
         // POST api/empresa
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] CadastroEmpresaDto dto)
+        public async Task<IActionResult> Post([FromBody] EmpresaDto dto)
         {
-            Empresa empresa = new Empresa(dto.Nome, dto.Cnpj, dto.DataFundacao);
+            _armazenadorDeEmpresa.Armazenar(dto);
 
-            try
+            if (!OperacaoValida())
             {
-                _iEmpresaBusiness.Post(empresa);
-                return Ok();
+                return BadRequestResponse();
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }            
+
+            return Ok();
         }
 
         // PUT api/empresa
         [HttpPut]
-        public async Task<IActionResult> Put(int id, [FromBody] CadastroEmpresaDto dto)
+        public async Task<IActionResult> Put(int id, [FromBody] EmpresaDto dto)
         {
-            try
+            dto.Id = id;
+
+            _armazenadorDeEmpresa.Armazenar(dto);
+
+            if (!OperacaoValida())
             {
-                Empresa empresa = new Empresa(id, dto.Nome, dto.Cnpj, dto.DataFundacao);
-
-                _iEmpresaBusiness.Put(empresa);
-
-                return Ok();
+                return BadRequestResponse();
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }            
+
+            return Ok();
         }
 
         // DELETE api/empresa/1
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            try
+            bool resultado = _excluidorDeEmpresa.Excluir(id);
+
+            if (!OperacaoValida())
             {
-                _iEmpresaBusiness.Delete(id);
-                return Ok();
+                return BadRequestResponse();
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
+
+            return Ok(resultado);
         }
 
         // GET api/empresa/dropdown
         [HttpGet("dropdown")]
         public async Task<IActionResult> GetDropdown()
         {
-            List<Empresa> empresas = _iEmpresaBusiness.GetTodasEmpresas();
+            List<Empresa> empresas = _empresaConsulta.ObterTodas();
 
-            List<EmpresaDropdownDto> empresaDtos = _mapper.Map<List<EmpresaDropdownDto>>(empresas);
+            List<DropdownEmpresaDto> empresaDtos = _mapper.Map<List<DropdownEmpresaDto>>(empresas);
 
             return Ok(empresaDtos);
         }

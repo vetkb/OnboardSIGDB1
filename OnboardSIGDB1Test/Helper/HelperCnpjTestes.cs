@@ -1,4 +1,4 @@
-﻿using OnboardSIGDB1Dominio.EmpresaDominio.Helpers;
+﻿using OnboardSIGDB1Dominio.Empresas.Helpers;
 using Xunit;
 
 namespace OnboardSIGDB1Test
@@ -10,7 +10,7 @@ namespace OnboardSIGDB1Test
         {
             string cnpj = "87.375.265/0001-52";
 
-            string cnpjSemMascara = HelperCnpj.RemoveMascara(cnpj);
+            string cnpjSemMascara = CnpjHelper.RemoveMascara(cnpj);
 
             Assert.True(cnpjSemMascara.Length == 14);
         }
@@ -21,7 +21,7 @@ namespace OnboardSIGDB1Test
         [InlineData("88.286.818/0001-63")]
         public void DeveApontarQueCnpjValido(string cnpj)
         {
-            Assert.True(HelperCnpj.Valido(cnpj));
+            Assert.True(CnpjHelper.Valido(cnpj));
         }
 
         [Theory]
@@ -34,7 +34,7 @@ namespace OnboardSIGDB1Test
         [InlineData("123")]
         public void DeveApontarQueCnpjInValido(string cnpj)
         {
-            Assert.False(HelperCnpj.Valido(cnpj));
+            Assert.False(CnpjHelper.Valido(cnpj));
         }
     }
 }

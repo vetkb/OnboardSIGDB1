@@ -8,22 +8,33 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using OnboardSIGDB1Dominio;
-using OnboardSIGDB1Dominio.CargoDominio.Business;
-using OnboardSIGDB1Dominio.CargoDominio.DTO;
-using OnboardSIGDB1Dominio.CargoDominio.Interfaces;
-using OnboardSIGDB1Dominio.CargoDominio.ModelosDeBancoDeDados;
-using OnboardSIGDB1Dominio.CargoDominio.Repositorios;
-using OnboardSIGDB1Dominio.EmpresaDominio.Business;
-using OnboardSIGDB1Dominio.EmpresaDominio.DTO;
-using OnboardSIGDB1Dominio.EmpresaDominio.Interfaces;
-using OnboardSIGDB1Dominio.EmpresaDominio.ModelosDeBancoDeDados;
-using OnboardSIGDB1Dominio.EmpresaDominio.Repositorios;
-using OnboardSIGDB1Dominio.FuncionarioDominio.Business;
-using OnboardSIGDB1Dominio.FuncionarioDominio.DTO;
-using OnboardSIGDB1Dominio.FuncionarioDominio.Interfaces;
-using OnboardSIGDB1Dominio.FuncionarioDominio.ModelosDeBancoDeDados;
-using OnboardSIGDB1Dominio.FuncionarioDominio.Repositorios;
+using OnboardSIGDB1.Infra.Data;
+using OnboardSIGDB1.Infra.Data.Cargos.Repositorios;
+using OnboardSIGDB1.Infra.Data.Empresas.Repositorios;
+using OnboardSIGDB1.Infra.Data.Funcionarios.Repositorios;
+using OnboardSIGDB1Dominio._Base;
+using OnboardSIGDB1Dominio._Base.Interfaces;
+using OnboardSIGDB1Dominio.Cargos.Consultas;
+using OnboardSIGDB1Dominio.Cargos.Dtos;
+using OnboardSIGDB1Dominio.Cargos.Entidades;
+using OnboardSIGDB1Dominio.Cargos.Interfaces.Consultas;
+using OnboardSIGDB1Dominio.Cargos.Interfaces.Repositorios;
+using OnboardSIGDB1Dominio.Cargos.Interfaces.Servicos;
+using OnboardSIGDB1Dominio.Cargos.Servicos;
+using OnboardSIGDB1Dominio.Empresas.Consultas;
+using OnboardSIGDB1Dominio.Empresas.Dtos;
+using OnboardSIGDB1Dominio.Empresas.Entidades;
+using OnboardSIGDB1Dominio.Empresas.Interfaces.Consultas;
+using OnboardSIGDB1Dominio.Empresas.Interfaces.Repositorios;
+using OnboardSIGDB1Dominio.Empresas.Interfaces.Servicos;
+using OnboardSIGDB1Dominio.Empresas.Servicos;
+using OnboardSIGDB1Dominio.Funcionarios.Consultas;
+using OnboardSIGDB1Dominio.Funcionarios.Dtos;
+using OnboardSIGDB1Dominio.Funcionarios.Entidades;
+using OnboardSIGDB1Dominio.Funcionarios.Interfaces.Consultas;
+using OnboardSIGDB1Dominio.Funcionarios.Interfaces.Repositorios;
+using OnboardSIGDB1Dominio.Funcionarios.Interfaces.Servicos;
+using OnboardSIGDB1Dominio.Funcionarios.Servicos;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace OnboardSIGDB1
@@ -49,25 +60,35 @@ namespace OnboardSIGDB1
 
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new Info { Title = "OnboardSIGDB1", Version = "V1" });
-            });
+            });            
 
             services.AddDbContext<OnboardContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
                 , ServiceLifetime.Transient);
 
-            services.AddScoped<ICargoBusiness, CargoBusiness>();
+            services.AddScoped<ICargoConsulta, CargoConsulta>();
             services.AddScoped<ICargoRepositorio, CargoRepositorio>();
-            services.AddScoped<IEmpresaBusiness, EmpresaBusiness>();
+            services.AddScoped<IArmazenadorDeCargo, ArmazenadorDeCargo>();
+            services.AddScoped<IExcluidorDeCargo, ExcluidorDeCargo>();
+
+            services.AddScoped<IEmpresaConsulta, EmpresaConsulta>();
             services.AddScoped<IEmpresaRepositorio, EmpresaRepositorio>();
-            services.AddScoped<IFuncionarioBusiness, FuncionarioBusiness>();
+            services.AddScoped<IArmazenadorDeEmpresa, ArmazenadorDeEmpresa>();
+            services.AddScoped<IExcluidorDeEmpresa, ExcluidorDeEmpresa>();
+
+            services.AddScoped<IFuncionarioConsulta, FuncionarioConsulta>();
             services.AddScoped<IFuncionarioRepositorio, FuncionarioRepositorio>();
+            services.AddScoped<IArmazenadorDeFuncionario, ArmazenadorDeFuncionario>();
+            services.AddScoped<IExcluidorDeFuncionario, ExcluidorDeFuncionario>();
+
+            services.AddScoped<INotificationContext, NotificationContext>();
 
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<Cargo, CargoDto>();
-                cfg.CreateMap<Cargo, CargoDropdownDto>();
+                cfg.CreateMap<Cargo, DropdownCargoDto>();
                 cfg.CreateMap<Empresa, EmpresaDto>();
-                cfg.CreateMap<Empresa, EmpresaDropdownDto>();
+                cfg.CreateMap<Empresa, DropdownEmpresaDto>();
                 cfg.CreateMap<Funcionario, FuncionarioDto>()
                 .ForMember(dest => dest.EmpresaId, s => s.MapFrom(x => x.EmpresaId))
                 .ForMember(dest => dest.EmpresaNome, s => s.MapFrom(x => x.Empresa == null ? string.Empty : x.Empresa.Nome))

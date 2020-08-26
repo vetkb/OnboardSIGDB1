@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using OnboardSIGDB1Dominio.CargoDominio.DTO;
-using OnboardSIGDB1Dominio.CargoDominio.Interfaces;
-using OnboardSIGDB1Dominio.CargoDominio.ModelosDeBancoDeDados;
+using OnboardSIGDB1Dominio._Base.Interfaces;
+using OnboardSIGDB1Dominio.Cargos.Dtos;
+using OnboardSIGDB1Dominio.Cargos.Entidades;
+using OnboardSIGDB1Dominio.Cargos.Interfaces.Consultas;
+using OnboardSIGDB1Dominio.Cargos.Interfaces.Servicos;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -10,22 +12,31 @@ namespace OnboardSIGDB1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CargoController : ControllerBase
+    public class CargoController : BaseController
     {
         IMapper _mapper;
-        private readonly ICargoBusiness _iCargoBusiness;
+        private readonly ICargoConsulta _cargoConsulta;
+        private readonly IArmazenadorDeCargo _armazenadorDeCargo;
+        private readonly IExcluidorDeCargo _excluidorDeCargo;
 
-        public CargoController(ICargoBusiness iCargoBusiness, IMapper mapper)
+        public CargoController(
+            ICargoConsulta iCargoConsulta, 
+            IArmazenadorDeCargo armazenadorDeCargo, 
+            IMapper mapper,
+            IExcluidorDeCargo excluidorDeCargo,
+            INotificationContext notificationContext) : base(notificationContext)
         {
-            _iCargoBusiness = iCargoBusiness;
+            _cargoConsulta = iCargoConsulta;
+            _armazenadorDeCargo = armazenadorDeCargo;
             _mapper = mapper;
+            _excluidorDeCargo = excluidorDeCargo;
         }
 
         // GET api/cargo
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            List<Cargo> cargos = _iCargoBusiness.GetTodosCargos();
+            List<Cargo> cargos = _cargoConsulta.ObterTodos();
 
             List<CargoDto> cargosDto = _mapper.Map<List<CargoDto>>(cargos);
 
@@ -36,7 +47,7 @@ namespace OnboardSIGDB1.Controllers
         [HttpGet("pesquisar")]
         public async Task<IActionResult> Get([FromQuery] FiltroCargoDto filtro)
         {
-            List<Cargo> cargos = _iCargoBusiness.PesquisarCargos(filtro.Descricao);
+            List<Cargo> cargos = _cargoConsulta.Pesquisar(filtro);
 
             List<CargoDto> cargosDto = _mapper.Map<List<CargoDto>>(cargos);
 
@@ -47,7 +58,12 @@ namespace OnboardSIGDB1.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            Cargo cargo = _iCargoBusiness.GetCargo(id);
+            Cargo cargo = _cargoConsulta.ObterPorId(id);
+
+            if (cargo == null)
+            {
+                return NotFound(cargo);
+            }
 
             CargoDto cargoDto = _mapper.Map<CargoDto>(cargo);
 
@@ -56,22 +72,30 @@ namespace OnboardSIGDB1.Controllers
 
         // POST api/cargo
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] CadastroCargoDto dto)
+        public async Task<IActionResult> Post([FromBody] CargoDto dto)
         {
-            Cargo cargo = new Cargo(dto.Descricao);
+            _armazenadorDeCargo.Armazenar(dto);
 
-            _iCargoBusiness.Post(cargo);
+            if (!OperacaoValida())
+            {
+                return BadRequestResponse();
+            }
 
             return Ok();
         }
 
         // PUT api/cargo
         [HttpPut]
-        public async Task<IActionResult> Put(int id, [FromBody] CadastroCargoDto dto)
+        public async Task<IActionResult> Put(int id, [FromBody] CargoDto dto)
         {
-            Cargo cargo = new Cargo(id, dto.Descricao);
+            dto.Id = id;
 
-            _iCargoBusiness.Put(cargo);
+            _armazenadorDeCargo.Armazenar(dto);
+
+            if (!OperacaoValida())
+            {
+                return BadRequestResponse();
+            }
 
             return Ok();
         }
@@ -80,18 +104,23 @@ namespace OnboardSIGDB1.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            _iCargoBusiness.Delete(id);
+            var resultado = _excluidorDeCargo.Excluir(id);
 
-            return Ok();
+            if (!OperacaoValida())
+            {
+                return BadRequestResponse();
+            }
+
+            return Ok(resultado);
         }
 
         // GET api/cargo/dropdown
         [HttpGet("dropdown")]
         public async Task<IActionResult> GetDropdown()
         {
-            List<Cargo> cargos = _iCargoBusiness.GetTodosCargos();
+            List<Cargo> cargos = _cargoConsulta.ObterTodos();
 
-            List<CargoDropdownDto> cargosDto = _mapper.Map<List<CargoDropdownDto>>(cargos);
+            List<DropdownCargoDto> cargosDto = _mapper.Map<List<DropdownCargoDto>>(cargos);
 
             return Ok(cargosDto);
         }

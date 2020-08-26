@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OnboardSIGDB1.Infra.Data\OnboardSIGDB1.Infra.Data.csproj" />
     <ProjectReference Include="..\OnboardSIGDB1Dominio\OnboardSIGDB1Dominio.csproj" />
   </ItemGroup>
 

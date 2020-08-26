@@ -1,6 +1,6 @@
 using Bogus;
 using Bogus.Extensions.Brazil;
-using OnboardSIGDB1Dominio.EmpresaDominio.ModelosDeBancoDeDados;
+using OnboardSIGDB1Dominio.Empresas.Builders;
 using OnboardSIGDB1Test.Builders;
 using System;
 using Xunit;
@@ -23,9 +23,47 @@ namespace OnboardSIGDB1Test
         }
 
         [Fact]
-        public void DeveValidarFalseQuandoNomeForMuitoGrande()
+        public void DeveRetornarTrueSemDataDeFundacao()
         {
-            var empresa = new Empresa(_nomeInvalido, _cnpjTamanhoValido, null);
+            var empresa = EmpresaBuilder.Novo().ComNome(_nomeValido).ComCnpj(_cnpjTamanhoValido).Build();
+
+            var resultado = empresa.Validar();
+
+            Assert.True(resultado);
+        }
+
+        [Fact]
+        public void DeveRetornarTrueComDataDeFundacao()
+        {
+            var dataValida = DateTime.Now.Date;
+            var empresa = EmpresaBuilder.Novo()
+                .ComNome(_nomeValido)
+                .ComCnpj(_cnpjTamanhoValido)
+                .ComDataFundacao(dataValida)
+                .Build();
+
+            var resultado = empresa.Validar();
+
+            Assert.True(resultado);
+        }
+
+        [Fact]
+        public void DeveRetornarFalseQuandoNomeForMuitoGrande()
+        {
+            var empresa = EmpresaBuilder.Novo().ComNome(_nomeInvalido).Build();
+
+            var resultado = empresa.Validar();
+
+            Assert.False(resultado);
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("      ")]
+        [InlineData(null)]
+        public void DeveRetornarFalseQuandoNomeEstiverVazio(string nomeVazio)
+        {
+            var empresa = EmpresaBuilder.Novo().ComNome(nomeVazio).Build();
 
             var resultado = empresa.Validar();
 
@@ -35,10 +73,10 @@ namespace OnboardSIGDB1Test
         [Theory]
         [InlineData(13)]
         [InlineData(15)]
-        public void DeveValidarFalseQuandoTamanhoDoCnpjForDiferenteDe14(int tamanhoInvalido)
+        public void DeveRetornarFalseQuandoTamanhoDoCnpjForDiferenteDe14(int tamanhoInvalido)
         {
             var cnpjInvalido = _faker.Random.String2(tamanhoInvalido);
-            var empresa = new Empresa(_nomeValido, cnpjInvalido, null);
+            var empresa = EmpresaBuilder.Novo().ComNome(_nomeValido).ComCnpj(cnpjInvalido).Build();
 
             var resultado = empresa.Validar();
 
@@ -49,22 +87,9 @@ namespace OnboardSIGDB1Test
         [InlineData("")]
         [InlineData("      ")]
         [InlineData(null)]
-        public void DeveValidarFalseQuandoNomeEstiverVazio(string nomeVazio)
+        public void DeveRetornarFalseQuandoCnpjEstiverVazio(string cnpjVazio)
         {
-            var empresa = new Empresa(nomeVazio, _cnpjTamanhoValido, null);
-
-            var resultado = empresa.Validar();
-
-            Assert.False(resultado);
-        }
-
-        [Theory]
-        [InlineData("")]
-        [InlineData("      ")]
-        [InlineData(null)]
-        public void DeveValidarFalseQuandoCnpjEstiverVazio(string cnpjVazio)
-        {
-            var empresa = new Empresa(_nomeValido, cnpjVazio, null);
+            var empresa = EmpresaBuilder.Novo().ComNome(_nomeValido).ComCnpj(cnpjVazio).Build();
 
             var resultado = empresa.Validar();
 
@@ -72,10 +97,14 @@ namespace OnboardSIGDB1Test
         }
 
         [Fact]
-        public void DeveValidarFalseQuandoDataFundacaoForMaiorQueDataDeHoje()
+        public void DeveRetornarFalseQuandoDataFundacaoForMaiorQueDataDeHoje()
         {
             var dataFundacaoInvalida = DateTime.Now.AddDays(1);
-            var empresa = new Empresa(_nomeValido, _cnpjTamanhoValido, dataFundacaoInvalida);
+            var empresa = EmpresaBuilder.Novo()
+                .ComNome(_nomeValido)
+                .ComCnpj(_cnpjTamanhoValido)
+                .ComDataFundacao(dataFundacaoInvalida)
+                .Build();
 
             var resultado = empresa.Validar();
 

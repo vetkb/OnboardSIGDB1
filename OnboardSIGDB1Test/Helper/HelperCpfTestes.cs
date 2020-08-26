@@ -1,21 +1,16 @@
-﻿using OnboardSIGDB1Dominio.FuncionarioDominio.Helpers;
+﻿using OnboardSIGDB1Dominio.Funcionarios.Helpers;
 using Xunit;
 
 namespace OnboardSIGDB1Test.Helper
 {
     public class HelperCpfTestes
     {
-        public HelperCpfTestes()
-        {
-
-        }
-
         [Fact]
         public void DeveRetornarUmaStringCom11CaracteresExatosAposRemoverMascara()
         {
             string cpf = "844.581.470-21";
 
-            string cpfSemMascara = HelperCpf.RemoveMascara(cpf);
+            string cpfSemMascara = CpfHelper.RemoveMascara(cpf);
 
             Assert.True(cpfSemMascara.Length == 11);
         }
@@ -26,7 +21,7 @@ namespace OnboardSIGDB1Test.Helper
         [InlineData("391.542.910-46")]
         public void DeveApontarQueCpfValido(string cpf)
         {
-            Assert.True(HelperCpf.Valido(cpf));
+            Assert.True(CpfHelper.Valido(cpf));
         }
 
         [Theory]
@@ -39,7 +34,7 @@ namespace OnboardSIGDB1Test.Helper
         [InlineData("123")]
         public void DeveApontarQueCnpjInValido(string cpf)
         {
-            Assert.False(HelperCpf.Valido(cpf));
+            Assert.False(CpfHelper.Valido(cpf));
         }
     }
 }

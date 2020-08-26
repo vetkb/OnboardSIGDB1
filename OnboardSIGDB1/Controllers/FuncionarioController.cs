@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using OnboardSIGDB1Dominio.FuncionarioDominio.DTO;
-using OnboardSIGDB1Dominio.FuncionarioDominio.Interfaces;
-using OnboardSIGDB1Dominio.FuncionarioDominio.ModelosDeBancoDeDados;
+using OnboardSIGDB1Dominio._Base.Interfaces;
+using OnboardSIGDB1Dominio.Funcionarios.Dtos;
+using OnboardSIGDB1Dominio.Funcionarios.Entidades;
+using OnboardSIGDB1Dominio.Funcionarios.Interfaces.Consultas;
+using OnboardSIGDB1Dominio.Funcionarios.Interfaces.Servicos;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -10,14 +13,23 @@ namespace OnboardSIGDB1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FuncionarioController : ControllerBase
+    public class FuncionarioController : BaseController
     {
         IMapper _mapper;
-        readonly IFuncionarioBusiness _iFuncionarioBusiness;
+        private readonly IFuncionarioConsulta _funcionarioConsulta;
+        private readonly IArmazenadorDeFuncionario _armazenadorDeFuncionario;
+        private readonly IExcluidorDeFuncionario _excluidorDeFuncionario;
 
-        public FuncionarioController(IFuncionarioBusiness iFuncionarioBusiness, IMapper mapper)
+        public FuncionarioController(
+            IFuncionarioConsulta funcionarioConsulta,
+            IArmazenadorDeFuncionario armazenadorDeFuncionario,
+            IExcluidorDeFuncionario excluidorDeFuncionario,
+            IMapper mapper,
+            INotificationContext notificationContext) : base(notificationContext)
         {
-            _iFuncionarioBusiness = iFuncionarioBusiness;
+            _funcionarioConsulta = funcionarioConsulta;
+            _armazenadorDeFuncionario = armazenadorDeFuncionario;
+            _excluidorDeFuncionario = excluidorDeFuncionario;
             _mapper = mapper;
         }
 
@@ -25,7 +37,7 @@ namespace OnboardSIGDB1.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            List<Funcionario> funcionarios = _iFuncionarioBusiness.GetTodosFuncionarios();
+            List<Funcionario> funcionarios = _funcionarioConsulta.ObterTodos();
 
             List<FuncionarioDto> funcionariosDto = _mapper.Map<List<FuncionarioDto>>(funcionarios);
 
@@ -36,7 +48,7 @@ namespace OnboardSIGDB1.Controllers
         [HttpGet("pesquisar")]
         public async Task<IActionResult> Get([FromQuery] FiltroFuncionarioDto filtro)
         {
-            List<Funcionario> funcionarios = _iFuncionarioBusiness.GetFuncionarios(filtro.Nome, filtro.Cpf, filtro.DataContratacao);
+            List<Funcionario> funcionarios = _funcionarioConsulta.ObterPorFiltro(filtro);
 
             List<FuncionarioDto> funcionariosDto = _mapper.Map<List<FuncionarioDto>>(funcionarios);
 
@@ -47,7 +59,12 @@ namespace OnboardSIGDB1.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            Funcionario funcionario = _iFuncionarioBusiness.GetFuncionario(id);
+            Funcionario funcionario = _funcionarioConsulta.ObterPorId(id);
+
+            if (funcionario == null)
+            {
+                return NotFound(funcionario);
+            }
 
             FuncionarioDto funcionarioDto = _mapper.Map<FuncionarioDto>(funcionario);
 
@@ -58,20 +75,35 @@ namespace OnboardSIGDB1.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CadastroFuncionarioDto dto)
         {
-            Funcionario funcionario = new Funcionario(dto.Nome, dto.Cpf, dto.DataContratacao);
+            FuncionarioDto funcionario = new FuncionarioDto()
+            {
+                Nome = dto.Nome,
+                DataContratacao = dto.DataContratacao,
+                Cpf = dto.Cpf
+            };
 
-            _iFuncionarioBusiness.Post(funcionario);
+            _armazenadorDeFuncionario.Armazenar(funcionario);
+
+            if (!OperacaoValida())
+            {
+                return BadRequestResponse();
+            }
 
             return Ok();
         }
 
         // PUT api/funcionario
         [HttpPut]
-        public async Task<IActionResult> Put(int id, [FromBody] CadastroFuncionarioDto dto)
+        public async Task<IActionResult> Put(int id, [FromBody] FuncionarioDto dto)
         {
-            Funcionario funcionario = new Funcionario(id, dto.Nome, dto.Cpf, dto.DataContratacao, dto.EmpresaId, dto.CargoId);
+            dto.Id = id;
 
-            _iFuncionarioBusiness.Put(funcionario);
+            _armazenadorDeFuncionario.Armazenar(dto);
+
+            if (!OperacaoValida())
+            {
+                return BadRequestResponse();
+            }
 
             return Ok();
         }
@@ -80,9 +112,14 @@ namespace OnboardSIGDB1.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            _iFuncionarioBusiness.Delete(id);
+            bool resultado = _excluidorDeFuncionario.Excluir(id);
 
-            return Ok();
+            if (!OperacaoValida())
+            {
+                return BadRequestResponse();
+            }
+
+            return Ok(resultado);
         }
     }
 }

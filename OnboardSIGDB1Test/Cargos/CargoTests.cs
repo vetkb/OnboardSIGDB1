@@ -1,5 +1,6 @@
 ﻿using Bogus;
-using OnboardSIGDB1Dominio.CargoDominio.ModelosDeBancoDeDados;
+using ExpectedObjects;
+using OnboardSIGDB1Dominio.Cargos.Builders;
 using OnboardSIGDB1Test.Builders;
 using Xunit;
 
@@ -15,11 +16,24 @@ namespace OnboardSIGDB1Test.Cargos
         }
 
         [Fact]
-        public void DeveValidarFalseQuandoDescricaoMuitoGrande()
+        public void DeveCriarUmCargo()
+        {
+            var cargoEsperado = new
+            {
+                Descricao = "teste"
+            };
+
+            var cargo = CargoBuilder.Novo().ComDescricao("teste").Build();
+
+            cargoEsperado.ToExpectedObject().ShouldMatch(cargo);
+        }
+
+        [Fact]
+        public void DeveRetornarFalseQuandoDescricaoForMuitoGrande()
         {
             var descricaoInvalida = _faker.Random.String2(251);
 
-            var cargo = new Cargo(descricaoInvalida);
+            var cargo = CargoBuilder.Novo().ComDescricao(descricaoInvalida).Build();
             var resultado = cargo.Validar();
 
             Assert.False(resultado);
@@ -29,9 +43,9 @@ namespace OnboardSIGDB1Test.Cargos
         [InlineData("")]
         [InlineData("      ")]
         [InlineData(null)]
-        public void DeveValidarFalseQuandoDescricaoEstiverVazia(string descricaoVazia)
+        public void DeveRetornarFalseQuandoDescricaoEstiverVaziaOuNula(string descricaoVazia)
         {
-            var cargo = new Cargo(descricaoVazia);
+            var cargo = CargoBuilder.Novo().ComDescricao(descricaoVazia).Build();
 
             var resultado = cargo.Validar();
 
